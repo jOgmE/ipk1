@@ -38,14 +38,14 @@ def do_get(line):
     #sending response regard the requested respond
     if(typ == "A"):
         try:
-            respond = 'HTTP/1.1 200 OK\r\n\r\n' + name + ':' + typ + '='
-            return respond + socket.getaddrinfo(name, 80, family=socket.AF_INET, proto=socket.IPPROTO_TCP)[0][4][0] + '\r\n'
+            respond = 'HTTP/1.1 200 OK\r\n\r\n'
+            return respond + '{}:{}={}'.format(name, typ, socket.getaddrinfo(name, 80, family=socket.AF_INET, proto=socket.IPPROTO_TCP)[0][4][0] + '\r\n')
         except:
             return "HTTP/1.1 404 Not Found\r\n\r\n"
     elif(typ == "PTR"):
         try:
-            respond = 'HTTP/1.1 200 OK\r\n\r\n' + name + ':' + typ + '='
-            return respond + socket.getnameinfo((name, 80),socket.NI_NAMEREQD)[0] + '\r\n'
+            respond = 'HTTP/1.1 200 OK\r\n\r\n'
+            return respond + '{}:{}={}'.format(name, typ, socket.getnameinfo((name, 80),socket.NI_NAMEREQD)[0] + '\r\n')
         except:
             return "HTTP/1.1 404 Not Found\r\n\r\n"
     else:
@@ -53,12 +53,32 @@ def do_get(line):
 
 def do_post(line):
     #control lexical
-    check = line[0].split
+    check = line.split()
     if(check[0] != "POST" and check[1] != "/dns-query" and check[2] != "HTTP/1.1"):
-        return "HTP/1.1 400 Bad Request\r\n\r\n"
+        return "HTTP/1.1 400 Bad Request\r\n\r\n"
     #separating the header and the data
     line = line.split('\r\n\r\n')
-    print(line[1])
+    respond = []
+    #generate the data
+
+    for s in line[1].split('\n'):
+        s = s.split(':')
+        try:
+            if(s[1] == 'A'):
+                respond.append('{}:{}={}'.format(s[0], s[1], socket.getaddrinfo(s[0], 80, family=socket.AF_INET, proto=socket.IPPROTO_TCP)[0][4][0] + '\r\n'))
+            elif(s[1] == 'PTR'):
+                respond.append('{}:{}={}'.format(s[0], s[1], socket.getnameinfo((s[0], 80),socket.NI_NAMEREQD)[0] + '\r\n'))
+        except:
+            continue
+    #putting header before the data
+    #after clarification edit below
+    if(len(respond) == 0):
+        return "HTTP/1.1 400 Bad Request\r\n\r\n"
+    else:
+        out = "HTTP/1.1 200 OK\r\n\r\n"
+        for s in respond:
+            out += s
+        return out
 
 #-------- main body of the program ----------
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:

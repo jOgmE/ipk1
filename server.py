@@ -5,14 +5,14 @@
 import socket
 
 HOST = '127.0.0.1'
-PORT = 64568 #should been readed from arguments
+PORT = 64569 #should been readed from arguments
 
 def parse(line):
-    line = line.strip().split()
+    check = line.split()
 
-    if(line[0] == "GET"):
-        return do_get(line)
-    elif(line[0] == "POST"):
+    if(check[0] == "GET"):
+        return do_get(line.split('\r\n')[0].split())
+    elif(check[0] == "POST"):
         return do_post(line)
     else:
         return "HTTP/1.1 405 Method Not Allowed\r\n\r\n"
@@ -51,6 +51,15 @@ def do_get(line):
     else:
         return "HTTP/1.1 400 Bad Request\r\n\r\n"
 
+def do_post(line):
+    #control lexical
+    check = line[0].split
+    if(check[0] != "POST" and check[1] != "/dns-query" and check[2] != "HTTP/1.1"):
+        return "HTP/1.1 400 Bad Request\r\n\r\n"
+    #separating the header and the data
+    line = line.split('\r\n\r\n')
+    print(line[1])
+
 #-------- main body of the program ----------
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
     soc.bind((HOST,PORT))
@@ -61,6 +70,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
             data = conn.recv(1024)
             if not data:
                 break
-            conn.send(parse(data.decode('ascii').split('\r\n')[0]).encode('ascii'))
+            conn.send(parse(data.decode('ascii').strip()).encode('ascii'))
             conn.close()
             break

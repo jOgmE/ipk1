@@ -1,11 +1,16 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 
 #written by xpocsn00
 
 import socket
+import sys
 
 HOST = '127.0.0.1'
 PORT = 64569 #should been readed from arguments
+if len(sys.argv) > 1:
+    PORT = int(sys.argv[1])
+else:
+    exit(1)
 
 def parse(line):
     check = line.split()
@@ -85,11 +90,17 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
     soc.bind((HOST,PORT))
     soc.listen()
     while True:
-        conn, addr = soc.accept()
-        while True:
-            data = conn.recv(1024)
-            if not data:
+        conn = None
+        try:
+            conn, addr = soc.accept()
+            while True:
+                data = conn.recv(1024)
+                if not data:
+                    break
+                conn.send(parse(data.decode('ascii').strip()).encode('ascii'))
+                conn.close()
                 break
-            conn.send(parse(data.decode('ascii').strip()).encode('ascii'))
-            conn.close()
+        except KeyboardInterrupt:
+            if conn:
+                conn.close()
             break

@@ -63,8 +63,9 @@ def do_get(line):
 
 def do_post(line):
     #control lexical
+    not_f = 0 #not found counter
     check = line.split()
-    if(check[0] != "POST" and check[1] != "/dns-query" and check[2] != "HTTP/1.1"):
+    if(check[0] != "POST" or check[1] != "/dns-query" or check[2] != "HTTP/1.1"):
         return "HTTP/1.1 400 Bad Request\r\n\r\n"
     #separating the header and the data
     line = line.split('\r\n\r\n')
@@ -73,16 +74,21 @@ def do_post(line):
     #generate the data
     for s in line[1].split('\n'):
         s = s.split(':')
+        s[0] = s[0].strip()
+        s[1] = s[1].strip()
         try:
-            if(s[1] == 'A'):
+            if(s[1] == 'A' and not check_ipv4(s[0])):
                 respond.append('{}:{}={}'.format(s[0], s[1], socket.getaddrinfo(s[0], 80, family=socket.AF_INET, proto=socket.IPPROTO_TCP)[0][4][0] + '\r\n'))
-            elif(s[1] == 'PTR'):
+            elif(s[1] == 'PTR' and check_ipv4(s[0])):
                 respond.append('{}:{}={}'.format(s[0], s[1], socket.getnameinfo((s[0], 80),socket.NI_NAMEREQD)[0] + '\r\n'))
         except:
+            not_f += 1
             continue
     #putting header before the data
     #after clarification edit below
     if(len(respond) == 0):
+        if(len(line[1].split('\n')) == not_f):
+            return "HTTP/1.1 404 Not Found\r\n\r\n"
         return "HTTP/1.1 400 Bad Request\r\n\r\n"
     else:
         out = "HTTP/1.1 200 OK\r\n\r\n"

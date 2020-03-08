@@ -20,8 +20,8 @@ Resolver dokáže spracovat dva operácie: GET a POST.
 
 Je implementovaná operácia `resolve`, ktorá dostane adresu a prekonvertuje ju podľa požadovaného typu.
 Povolené typy: A, PTR  
-    * A: konvertuje z doménového mena a ip adresu
-    * PTR: konvertuje z ip adresy na doménové meno
+  * A: konvertuje z doménového mena a ip adresu
+  * PTR: konvertuje z ip adresy na doménové meno
 
 ##### POST
 

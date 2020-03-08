@@ -16,14 +16,14 @@ make run PORT=64000
 
 Resolver dokáže spracovat dva operácie: GET a POST.
 
-#### GET
+##### GET
 
 Je implementovaná operácia `resolve`, ktorá dostane adresu a prekonvertuje ju podľa požadovaného typu.
 Povolené typy: A, PTR  
     * A: konvertuje z doménového mena a ip adresu
     * PTR: konvertuje z ip adresy na doménové meno
 
-#### POST
+##### POST
 
 Je implementovaná operácia `dns-query`, ktorá dosane zoznam adries ktoré budú prekonvertované podľa požiadavky. Typy sú totožné s typmi v GET.
 

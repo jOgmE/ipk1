@@ -14,14 +14,14 @@ alebo cez makefile:
 make run PORT=64000
 ```
 
-Resolver dokáže spracovat dva operácie: GET a POST.
+Resolver dokáže spracovat dve operácie: GET a POST.
 
 ##### GET
 
 Je implementovaná operácia `resolve`, ktorá prekladá danú adresu na požadovaný typ.  
 Povolené typy:  
-  * A: konvertuje z doménového mena na ip adresu
-  * PTR: konvertuje z ip adresy na doménové meno
+  * **A** konvertuje z doménového mena na ip adresu
+  * **PTR** konvertuje z ip adresy na doménové meno
 
 ##### POST
 

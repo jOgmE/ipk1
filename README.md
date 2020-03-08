@@ -17,10 +17,14 @@ Resolver dokáže spracovat dva operácie: GET a POST.
 
 #### GET
 
-Je implementovaná operácia `resolve`, čo dostane adresu a prekonvertuje ju podľa požadovaného typu.
+Je implementovaná operácia `resolve`, ktorá dostane adresu a prekonvertuje ju podľa požadovaného typu.
 Povolené typy: A, PTR
-    A: konvertuje z doménového mena a ip adresu
-    PTR: konvertuje z ip adresy na doménové meno
+    * A: konvertuje z doménového mena a ip adresu
+    * PTR: konvertuje z ip adresy na doménové meno
+
+#### POST
+
+Je implementovaná operácia `dns-query`, ktorá dosane zoznam adries ktoré budú prekonvertované podľa požiadavky. Typy sú totožné s typmi v GET.
 
 Vypracovanie používa knižnicu `socket` pre pracovanie zo systémovými socketmi. Socket zostáva otvorený až do skončenia programu (napr. `ctrl+c`)
 
